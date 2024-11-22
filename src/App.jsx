@@ -9,21 +9,29 @@ function App() {
   const [lastname,setLastname] = useState("")
   const [salary,setSalary] = useState("")
 
+  const [action, setAction] = useState(false);
+  
   const getUsers = async () => {
     try {
-      const res = await axios.get("https://deployback-rfg5.onrender.com:8080/api/person");
-      setList(res.data);
+      const res = await axios.get("https://deployback-rfg5.onrender.com/api/person");
+      setList(res.data.body.people);
       console.log(res.data); 
     } catch (error) {
       console.error("Erro ao buscar os dados", error);
     }
   };
-
+  
+    useEffect(() => {
+      getUsers();
+    }, [action]);
+  
   const registerUser = async () => {
     try { 
-      await axios.post("https://deployback-rfg5.onrender.com:8080/api/person",{
+      await axios.post("https://deployback-rfg5.onrender.com/api/person",{
         name, lastname, salary
       });
+
+      setAction(!action);
     } catch (error) {
       console.error("Erro ao inserir", error);
     }
@@ -31,8 +39,9 @@ function App() {
 
   const deleteUser = async (id) => {
     try { 
-      await axios.delete(`https://deployback-rfg5.onrender.com:8080/api/person/${id}`);
+      await axios.delete(`https://deployback-rfg5.onrender.com/api/person/${id}`);
       getUsers()
+      setAction(!action);
     } catch (error) {
       console.error("Erro ao inserir", error);
     }
@@ -41,7 +50,7 @@ function App() {
   const handleSubmit = (e) => {
     e.preventDefault()
     registerUser()
-    getUsers()
+    getUsers();
   }
 
   useEffect(() => {
